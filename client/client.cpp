@@ -64,6 +64,8 @@ void client::request_tags()
 
 	auto net = net::json_net();
 	net->send_msg(connection_id_, std::move(msg));
+
+	net::log() << "Requested tags. Please wait...";
 }
 
 void client::request_settings(const git::tag& tag)
@@ -76,6 +78,8 @@ void client::request_settings(const git::tag& tag)
 
 	auto net = net::json_net();
 	net->send_msg(connection_id_, std::move(msg));
+
+	net::log() << "Requested settings. Please wait...";
 }
 
 void client::request_export()
@@ -92,20 +96,22 @@ void client::request_export()
 
 		auto net = net::json_net();
 		net->send_msg(connection_id_, std::move(msg));
+
+		net::log() << "Requested export. Please wait...";
 	}
 	catch(const std::exception& e)
 	{
 		net::log() << e.what();
-    }
+	}
 }
 
 void client::request_export_bad()
 {
-    try
+	try
 	{
 		auto settings = settings_.at("settings").get<net::json>();
 		auto tag = settings_.at("tag").get<git::tag>();
-        settings["some_add"] = 12;
+		settings["some_add"] = 12;
 
 		net::json msg;
 		msg["id"] = "request_export";
@@ -114,11 +120,13 @@ void client::request_export_bad()
 
 		auto net = net::json_net();
 		net->send_msg(connection_id_, std::move(msg));
+
+		net::log() << "Requested export. Please wait...";
 	}
 	catch(const std::exception& e)
 	{
 		net::log() << e.what();
-    }
+	}
 }
 
 void client::on_tags_recieved(net::json in_msg)
@@ -133,7 +141,7 @@ void client::on_settings_recieved(net::json in_msg)
 
 void client::on_export_recieved(net::json in_msg)
 {
-    export_ = std::move(in_msg);
+	export_ = std::move(in_msg);
 }
 
 auto client::get_tags() const -> const std::vector<git::tag>&

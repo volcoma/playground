@@ -35,12 +35,12 @@ int main(int argc, char* argv[])
 
 		net::deinit_messengers();
 		net::deinit_services();
-		itc::shutdown();
+		return itc::shutdown();
 	}
 	catch(std::exception& e)
 	{
 		net::log() << "Exception: " << e.what();
 	}
 
-	return 0;
+	return -1;
 }
