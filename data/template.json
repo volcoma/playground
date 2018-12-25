@@ -1,0 +1,10 @@
+{
+    "setting1": "some string",
+    "setting2": [
+        0.1,
+        0.2,
+        0.3
+    ],
+	"setting3": "test",
+	"setting4": "haha"
+}
