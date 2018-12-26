@@ -26,8 +26,7 @@ void console_client::init(net::connector_ptr connector)
 
 					auto tag = input_line[1];
 					const auto& tags = get_tags();
-					auto it = std::find_if(std::begin(tags), std::end(tags),
-										   [&tag](const auto& el) { return tag == el.id; });
+					auto it = std::find(std::begin(tags), std::end(tags), tag);
 					if(it != std::end(tags))
 					{
 						request_settings(*it);

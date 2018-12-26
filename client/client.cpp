@@ -68,7 +68,7 @@ void client::request_tags()
 	net::log() << "Requested tags. Please wait...";
 }
 
-void client::request_settings(const git::tag& tag)
+void client::request_settings(const std::string& tag)
 {
 	settings_ = {};
 
@@ -87,7 +87,7 @@ void client::request_export()
 	try
 	{
 		auto settings = settings_.at("settings").get<net::json>();
-		auto tag = settings_.at("tag").get<git::tag>();
+		auto tag = settings_.at("tag").get<std::string>();
 
 		net::json msg;
 		msg["id"] = "request_export";
@@ -110,7 +110,7 @@ void client::request_export_bad()
 	try
 	{
 		auto settings = settings_.at("settings").get<net::json>();
-		auto tag = settings_.at("tag").get<git::tag>();
+		auto tag = settings_.at("tag").get<std::string>();
 		settings["some_add"] = 12;
 
 		net::json msg;
@@ -131,7 +131,7 @@ void client::request_export_bad()
 
 void client::on_tags_recieved(net::json in_msg)
 {
-	tags_ = in_msg.at("tags").get<std::vector<git::tag>>();
+	tags_ = in_msg.at("tags").get<std::vector<std::string>>();
 }
 
 void client::on_settings_recieved(net::json in_msg)
@@ -144,7 +144,7 @@ void client::on_export_recieved(net::json in_msg)
 	export_ = std::move(in_msg);
 }
 
-auto client::get_tags() const -> const std::vector<git::tag>&
+auto client::get_tags() const -> const std::vector<std::string>&
 {
 	return tags_;
 }

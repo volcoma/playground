@@ -1,12 +1,15 @@
 #pragma once
-#include "types.h"
 
 #include <asiopp/service.h>
 #include <builderpp/msg_builder.h>
 #include <messengerpp/messenger.h>
 
+#include <jsonpp/json.hpp>
+#include <iomanip>
+
 namespace net
 {
+using json = nlohmann::json;
 
 template <>
 struct serializer<json, json, json>

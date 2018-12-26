@@ -11,7 +11,7 @@ public:
 	void shutdown();
 
 	void request_tags();
-	void request_settings(const git::tag& tag);
+	void request_settings(const std::string& tag);
 	void request_export();
     void request_export_bad();
 
@@ -19,13 +19,13 @@ public:
 	void on_settings_recieved(net::json in_msg);
 	void on_export_recieved(net::json in_msg);
 
-    auto get_tags() const -> const std::vector<git::tag>&;
+    auto get_tags() const -> const std::vector<std::string>&;
     auto get_settings() const -> const net::json&;
 
     void dump();
 
 private:
-	std::vector<git::tag> tags_;
+	std::vector<std::string> tags_;
 	net::json settings_;
 	net::json export_;
 

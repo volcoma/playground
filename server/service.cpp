@@ -4,6 +4,49 @@
 namespace market
 {
 
+auto unique_filename(const std::string& tag, net::connection::id_t id) -> std::string
+{
+	return tag + "[" + std::to_string(id) + "]";
+}
+
+auto get_remote_json_file(const std::string& repo, const std::string& tag_id, const std::string& file,
+						  const std::string& output_file) -> net::json
+{
+	net::json settings{};
+
+	net::log() << "Download " + repo + "/" + tag_id + "/" + file + " > " + output_file + " ...";
+	// download the file
+	if(git::download_remote_file(repo, tag_id, file, output_file))
+	{
+		// load it
+		std::ifstream file_stream{};
+		file_stream.open(output_file);
+
+		if(file_stream.is_open())
+		{
+			// deserialize it
+			file_stream >> settings;
+		}
+	}
+
+	// remove it
+	std::remove(output_file.c_str());
+	return settings;
+}
+
+auto get_remote_tags(const std::string& repo) -> std::vector<std::string>
+{
+	auto tags = git::fetch_remote_tags(repo);
+
+	std::vector<std::string> result;
+	result.reserve(tags.size());
+	for(const auto& tag : tags)
+	{
+		result.emplace_back(tag.id);
+	}
+	return result;
+}
+
 bool validate_settings(const net::json& original_settings, const net::json& settings)
 {
 	auto diff = net::json::diff(original_settings, settings);
@@ -78,7 +121,7 @@ void service::on_tags_requested(net::connection::id_t id, net::json in_msg)
 	(void)in_msg;
 
 	pool_.schedule([id, repo = repo_]() {
-		auto tags = git::get_remote_tags(repo);
+		auto tags = get_remote_tags(repo);
 
 		net::json msg;
 		msg["id"] = "tags";
@@ -93,8 +136,10 @@ void service::on_settings_requested(net::connection::id_t id, net::json in_msg)
 {
 	pool_
 		.schedule([id, in_msg = std::move(in_msg), repo = repo_, file = file_]() mutable {
-			auto tag = in_msg.at("tag").get<git::tag>();
-			auto settings = git::load_remote_json_file(repo, tag.id, file);
+			auto tag = in_msg.at("tag").get<std::string>();
+
+			std::string output_file = unique_filename(tag, id) + ".json";
+			auto settings = get_remote_json_file(repo, tag, file, output_file);
 
 			net::json msg;
 			msg["id"] = "settings";
@@ -122,33 +167,35 @@ void service::on_settings_requested(net::connection::id_t id, net::json in_msg)
 
 void service::on_export_requested(net::connection::id_t id, net::json in_msg)
 {
-	auto og_msg = cache_[id];
+	auto cached_msg = cache_[id];
 
 	pool_
-		.schedule([id, in_msg = std::move(in_msg), og_msg = std::move(og_msg), repo = repo_, file = file_]() {
+		.schedule([id, in_msg = std::move(in_msg), cached_msg = std::move(cached_msg), repo = repo_,
+				   file = file_]() {
 			auto settings = in_msg.at("settings").get<net::json>();
-			auto tag = in_msg.at("tag").get<git::tag>();
+			auto tag = in_msg.at("tag").get<std::string>();
 
-			auto og_settings = [&]() {
+			auto remote_settings = [&]() {
 				try
 				{
-					return og_msg.at("settings").get<net::json>();
+					return cached_msg.at("settings").get<net::json>();
 				}
 				catch(const std::exception&)
 				{
 					net::log() << "Expired cache.";
-					return git::load_remote_json_file(repo, tag.id, file);
+					std::string output_file = unique_filename(tag, id) + ".json";
+					return get_remote_json_file(repo, tag, file, output_file);
 				}
 			}();
 
 			// only removing is allowed
-			auto ok = !settings.empty() && validate_settings(og_settings, settings);
+			auto ok = !settings.empty() && validate_settings(remote_settings, settings);
 
 			net::log() << "Validation " << (ok ? "passed." : "failed.");
 
 			if(ok)
 			{
-				std::string exported_name = "market[" + tag.id + "].json";
+				std::string exported_name = "market[" + tag + "].json";
 				std::ofstream o(exported_name);
 				o << std::setw(4) << settings << std::endl;
 			}
@@ -168,7 +215,7 @@ void service::on_export_requested(net::connection::id_t id, net::json in_msg)
 			// update the cache
 			net::json msg;
 			msg["id"] = "settings";
-			msg["settings"] = std::move(og_settings);
+			msg["settings"] = std::move(remote_settings);
 			msg["tag"] = std::move(tag);
 
 			return msg;
