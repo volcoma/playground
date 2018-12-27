@@ -51,13 +51,13 @@ auto download_remote_file(const std::string& repo, const std::string& tag_id, co
 						  const std::string& output_file) -> bool
 {
 
-	std::string cmd{};
-	cmd.append("curl -LJ " + repo + "/raw/");
-	cmd.append(tag_id);
-	cmd.append("/");
-	cmd.append(file);
-	cmd.append(" > ");
-	cmd.append(output_file);
+	//	std::string cmd{};
+	//	cmd.append("curl -LJ " + repo + "/raw/");
+	//	cmd.append(tag_id);
+	//	cmd.append("/");
+	//	cmd.append(file);
+	//	cmd.append(" > ");
+	//	cmd.append(output_file);
 
 	//	std::string cmd{};
 	//	cmd.append("git archive");
@@ -70,30 +70,30 @@ auto download_remote_file(const std::string& repo, const std::string& tag_id, co
 	//	cmd.append(file);
 	//	cmd.append(" | tar xf -");
 
-	//	const auto& tmp_repo = tag_id;
+	const auto& tmp_repo = tag_id;
 
-	//	std::string remove_cmd;
-	//#ifdef _WIN32
-	//	remove_cmd.append("if exist " + tmp_repo + " (rd /s /q " + tmp_repo + ")");
-	//#elif
-	//	remove_cmd.append("rm -rf " + tmp_repo);
-	//#endif
-	//	{
-	//		os::syscall(remove_cmd);
-	//	}
+	std::string remove_cmd;
+#ifdef _WIN32
+	remove_cmd.append("if exist " + tmp_repo + " (rd /s /q " + tmp_repo + ")");
+#elif
+	remove_cmd.append("rm -rf " + tmp_repo);
+#endif
+	{
+		os::syscall(remove_cmd);
+	}
 
-	//	// --branch also accepts tags
-	//	std::string cmd{};
-	//	cmd.append("git clone --depth 1 --no-checkout --branch " + tag_id);
-	//	cmd.append(" " + repo + " " + tmp_repo);
-	//	cmd.append(" && ");
-	//	cmd.append("cd " + tmp_repo);
-	//	cmd.append(" && ");
-	//	cmd.append("git show " + tag_id + ":" + file + " > ../" + output_file);
-	//	cmd.append(" && ");
-	//	cmd.append("cd ..");
-	//	cmd.append(" && ");
-	//	cmd.append(remove_cmd);
+	// --branch also accepts tags
+	std::string cmd{};
+	cmd.append("git clone --depth 1 --no-checkout --branch " + tag_id);
+	cmd.append(" " + repo + " " + tmp_repo);
+	cmd.append(" && ");
+	cmd.append("cd " + tmp_repo);
+	cmd.append(" && ");
+	cmd.append("git show " + tag_id + ":" + file + " > ../" + output_file);
+	cmd.append(" && ");
+	cmd.append("cd ..");
+	cmd.append(" && ");
+	cmd.append(remove_cmd);
 
 	return os::syscall(cmd).close() == 0;
 }
