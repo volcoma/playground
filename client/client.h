@@ -12,8 +12,7 @@ public:
 
 	void request_tags();
 	void request_settings(const std::string& tag);
-	void request_export();
-    void request_export_bad();
+	void request_export(const std::string& output_file);
 
 	void on_tags_recieved(net::json in_msg);
 	void on_settings_recieved(net::json in_msg);
@@ -24,7 +23,7 @@ public:
 
     void dump();
 
-private:
+protected:
 	std::vector<std::string> tags_;
 	net::json settings_;
 	net::json export_;

@@ -2,6 +2,10 @@
 #include <common/string_utils.h>
 namespace market
 {
+bool contains(const std::string& input, const std::string& substr)
+{
+    return input.find(substr) != std::string::npos;
+}
 
 void console_client::init(net::connector_ptr connector)
 {
@@ -16,31 +20,36 @@ void console_client::init(net::connector_ptr connector)
 			std::getline(std::cin, input);
 
 			itc::invoke(itc::main_thread::get_id(), [this, input]() {
-				if(input == "request_tags")
+				if(contains(input, "request_tags"))
 				{
 					request_tags();
 				}
-				else if(input.find("request_settings") != std::string::npos)
+				else if(contains(input, "request_settings"))
 				{
-					auto input_line = string_utils::split(input, ' ', true);
-
-					auto tag = input_line[1];
-					const auto& tags = get_tags();
-					auto it = std::find(std::begin(tags), std::end(tags), tag);
-					if(it != std::end(tags))
+                    // tokenize by spaces or tabs
+					auto input_line = string_utils::tokenize(input, " \t");
+					if(input_line.size() > 1)
 					{
-						request_settings(*it);
+                        auto tag = input_line.at(1);
+                        const auto& tags = get_tags();
+                        auto it = std::find(std::begin(tags), std::end(tags), tag);
+                        if(it != std::end(tags))
+                        {
+                            request_settings(*it);
+                        }
 					}
 				}
-				else if(input == "request_export")
+				else if(contains(input, "request_export"))
 				{
-					request_export();
+                    // tokenize by spaces or tabs
+					auto input_line = string_utils::tokenize(input, " \t");
+					if(input_line.size() > 1)
+					{
+                        auto name = input_line.at(1);
+                        request_export(name);
+					}
 				}
-				else if(input == "request_export_bad")
-				{
-					request_export_bad();
-				}
-				else if(input == "dump")
+				else if(contains(input, "dump"))
 				{
 					dump();
 				}

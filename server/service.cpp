@@ -174,6 +174,7 @@ void service::on_export_requested(net::connection::id_t id, net::json in_msg)
 				   file = file_]() {
 			auto settings = in_msg.at("settings").get<net::json>();
 			auto tag = in_msg.at("tag").get<std::string>();
+            auto name = in_msg.at("name").get<std::string>();
 
 			auto remote_settings = [&]() {
 				try
@@ -195,7 +196,7 @@ void service::on_export_requested(net::connection::id_t id, net::json in_msg)
 
 			if(ok)
 			{
-				std::string exported_name = "market[" + tag + "].json";
+				std::string exported_name = name + "[" + tag + "].json";
 				std::ofstream o(exported_name);
 				o << std::setw(4) << settings << std::endl;
 			}

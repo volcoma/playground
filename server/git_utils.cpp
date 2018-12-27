@@ -19,11 +19,11 @@ auto fetch_remote_tags(const std::string& repo) -> std::vector<tag>
 	cmd.append(repo);
 
 	auto output = os::syscall(cmd).get_output();
-	auto lines = string_utils::split(output, '\n');
+	auto lines = string_utils::tokenize(output, "\n");
 
 	for(const auto& line : lines)
 	{
-		auto tag_data = string_utils::split(line, '\t');
+		auto tag_data = string_utils::tokenize(line, "\t");
 
 		if(tag_data.size() != 2)
 		{

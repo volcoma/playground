@@ -82,7 +82,7 @@ void client::request_settings(const std::string& tag)
 	net::log() << "Requested settings. Please wait...";
 }
 
-void client::request_export()
+void client::request_export(const std::string& output_file)
 {
 	try
 	{
@@ -93,30 +93,7 @@ void client::request_export()
 		msg["id"] = "request_export";
 		msg["settings"] = std::move(settings);
 		msg["tag"] = std::move(tag);
-
-		auto net = net::json_net();
-		net->send_msg(connection_id_, std::move(msg));
-
-		net::log() << "Requested export. Please wait...";
-	}
-	catch(const std::exception& e)
-	{
-		net::log() << e.what();
-	}
-}
-
-void client::request_export_bad()
-{
-	try
-	{
-		auto settings = settings_.at("settings").get<net::json>();
-		auto tag = settings_.at("tag").get<std::string>();
-		settings["some_add"] = 12;
-
-		net::json msg;
-		msg["id"] = "request_export";
-		msg["settings"] = std::move(settings);
-		msg["tag"] = std::move(tag);
+		msg["name"] = output_file;
 
 		auto net = net::json_net();
 		net->send_msg(connection_id_, std::move(msg));
