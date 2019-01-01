@@ -171,7 +171,7 @@ before_install:
   - |
     if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
       sudo apt-get install cmake
-      sudo apt-get install openssl-dev
+      sudo apt-get install openssl
     elif [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
       brew install cmake
       brew install openssl@1.1
@@ -180,7 +180,7 @@ before_install:
       choco install cmake
       choco install openssl.light
       setx OPENSSL_ROOT_DIR "C:/Program Files/OpenSSL"
-      echo %OPENSSL_ROOT_DIR%
+      echo "%OPENSSL_ROOT_DIR%"
     fi
   
 notifications:
