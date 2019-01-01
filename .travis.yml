@@ -167,7 +167,7 @@ before_install:
       choco install ninja
       
       choco install openssl.light
-      export OPENSSL_ROOT_DIR="C:\Program Files\OpenSSL\"
+      export OPENSSL_ROOT_DIR="C:\\Program Files\\OpenSSL\\"
     fi
 
 before_script:
