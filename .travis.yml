@@ -2,7 +2,7 @@ language: cpp
 
 env:
   global:
-   - MAKEFLAGS="-j 2"
+    - MAKEFLAGS="-j 2"  
    
 addons:
   apt:
@@ -40,6 +40,7 @@ matrix:
             - *global_homebrew
             - gcc5
       env:
+        - OPENSSL_ROOT_DIR="/usr/local/opt/openssl@1.1"
         - MATRIX_EVAL="CC=gcc-5 && CXX=g++-5"
  
     - os: osx
@@ -50,7 +51,9 @@ matrix:
             - *global_homebrew
             - gcc6
       env:
+        - OPENSSL_ROOT_DIR="/usr/local/opt/openssl@1.1"
         - MATRIX_EVAL="CC=gcc-6 && CXX=g++-6"
+
     - os: osx
       osx_image: xcode10
       addons: &gcc7
@@ -59,6 +62,7 @@ matrix:
             - *global_homebrew
             - gcc
       env:
+        - OPENSSL_ROOT_DIR="/usr/local/opt/openssl@1.1"
         - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
 
 
@@ -72,17 +76,15 @@ matrix:
       os: osx
       osx_image: xcode10
       env:
-       - CMAKE_FLAGS="-GXcode -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchains/iOS.toolchain.cmake -DIOS_PLATFORM=SIMULATOR"
+        - OPENSSL_ROOT_DIR="/usr/local/opt/openssl@1.1"
+        - CMAKE_FLAGS="-GXcode -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchains/iOS.toolchain.cmake -DIOS_PLATFORM=SIMULATOR"
     
     - name: "Visual studio 15 2017"
       os: windows
-      addons: &gcc7
-        chocolatey:
-          packages:
-            - *global_chocolatey
             
-    #- name: "MinGW"
-    #  os: windows
+    - name: "MinGW"
+      os: windows
+      compiler: gcc
     
     #- name: "Visual studio 15 2017 Static"
     #  os: windows
