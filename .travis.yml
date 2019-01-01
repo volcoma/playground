@@ -1,37 +1,45 @@
 language: cpp
 
-env:
-  global:
-    - MAKEFLAGS="-j 2"  
-   
-#addons:
-#  apt:
-#    packages: &global_apt
-#      - cmake
-#      - ninja
-#      - openssl
-#  homebrew:
-#    packages: &global_homebrew
-#      - cmake
-#      - ninja
-#      - openssl@1.1
-#  chocolatey: &global_chocolatey
-#    packages:
-#      - cmake
-#      - ninja
-#      - openssl.light
 
+before_install:
+  - eval "${MATRIX_EVAL}"
+  - |
+    if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
+      sudo apt-get install cmake
+      sudo apt-get install ninja
+      
+      
+      sudo apt-get install openssl
+    elif [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
+      brew install cmake
+      brew install ninja
+      
+      brew install openssl@1.1
+      export OPENSSL_ROOT_DIR="/usr/local/opt/openssl@1.1"
+      echo "$OPENSSL_ROOT_DIR"
+    elif [[ "${TRAVIS_OS_NAME}" == "windows" ]]; then
+      choco install cmake
+      choco install ninja
+      
+      choco install openssl.light
+      export OPENSSL_ROOT_DIR="C:\Program Files\OpenSSL\"
+      echo "$OPENSSL_ROOT_DIR"
+    fi
 
 before_script:
 - mkdir build && cd build
-- cmake ..
+- cmake -G "Ninja" ..
 
 script:
 - cmake --build . --target all
 
+
 matrix:
   include:
  
+###################################################### 
+#OSX GCC
+###################################################### 
     - os: osx
       osx_image: xcode10
       addons: &gcc5
@@ -58,26 +66,31 @@ matrix:
             - gcc
       env:
         - MATRIX_EVAL="CC=gcc && CXX=g++"
-
+###################################################### 
+#OSX Clang
+###################################################### 
     - os: osx
       osx_image: xcode10
       compiler: clang
       env:
         - CMAKE_FLAGS="-GXcode -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchains/iOS.toolchain.cmake -DIOS_PLATFORM=SIMULATOR"
-    
+
+###################################################### 
+#Windows MSVC
+######################################################         
     - name: "Visual studio 15 2017"
       os: windows
-            
+
+###################################################### 
+#Windows MinGW
+######################################################       
     - name: "MinGW"
       os: windows
       compiler: gcc
-    
-    #- name: "Visual studio 15 2017 Static"
-    #  os: windows
-    #  env:
-    #    - CMAKE_FLAGS="-DBUILD_SHARED_LIBS=FALSE"
-  
-    # 1/ Linux Clang Builds
+
+###################################################### 
+#Linux Clang
+###################################################### 
     - os: linux
       addons: &clang38
         apt:
@@ -128,8 +141,11 @@ matrix:
             - clang-5.0
       env: 
         - MATRIX_EVAL="CC=clang-5.0 && CXX=clang++-5.0"
- 
-    # 2/ Linux GCC Builds
+        
+###################################################### 
+#Linux GCC
+###################################################### 
+
     - os: linux
       addons: &gcc5
         apt:
@@ -163,26 +179,8 @@ matrix:
             - g++-7
       env:
         - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
-     
-    
+###################################################### 
 
-before_install:
-  - eval "${MATRIX_EVAL}"
-  - |
-    if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
-      sudo apt-get install cmake
-      sudo apt-get install openssl
-    elif [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
-      brew install cmake
-      brew install openssl@1.1
-      export OPENSSL_ROOT_DIR="/usr/local/opt/openssl@1.1"
-      echo "$OPENSSL_ROOT_DIR"
-    elif [[ "${TRAVIS_OS_NAME}" == "windows" ]]; then
-      choco install cmake
-      choco install openssl.light
-      export OPENSSL_ROOT_DIR="C:\Program Files\OpenSSL"
-      echo "$OPENSSL_ROOT_DIR"
-    fi
   
 notifications:
   email: false
