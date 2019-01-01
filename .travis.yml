@@ -7,16 +7,17 @@ env:
 addons:
   apt_packages:
     - cmake
+    - libopenssl-dev
     #- libxrandr-dev
     #- libudev-dev
     #- libopenal-dev
     #- libflac-dev
     #- libvorbis-dev
-    - g++
-    - clang-3.8
-    - clang-3.9
-    - clang-4.0
-    - clang-5.0
+    #- g++
+    #- clang-3.8
+    #- clang-3.9
+    #- clang-4.0
+    #- clang-5.0
     #- libgl1-mesa-dev
 
 before_script:
@@ -32,11 +33,17 @@ matrix:
   - name: "Linux gcc Dynamic"
     os: linux
     dist: xenial
+    addons:
+    apt_packages:
+      - g++
+
     compiler: gcc
   
   - name: "Linux gcc Static"
     os: linux
     dist: xenial
+    apt_packages:
+      - g++
     compiler: gcc
     env:
       - CMAKE_FLAGS="-DBUILD_SHARED_LIBS=FALSE"
@@ -44,11 +51,15 @@ matrix:
   - name: "Linux clang-3.8 Dynamic"
     os: linux
     dist: xenial
+    apt_packages:
+      - clang-3.8
     compiler: clang-3.8
 
   - name: "Linux clang-3.8 Static"
     os: linux
     dist: xenial
+    apt_packages:
+      - clang-3.8
     compiler: clang-3.8
     env:
       - CMAKE_FLAGS="-DBUILD_SHARED_LIBS=FALSE"
@@ -56,11 +67,15 @@ matrix:
   - name: "Linux clang-5.0 Dynamic"
     os: linux
     dist: xenial
+    apt_packages:
+      - clang-5.0
     compiler: clang-5.0
 
   - name: "Linux clang-5.0 Static"
     os: linux
     dist: xenial
+    apt_packages:
+      - clang-5.0
     compiler: clang-5.0
     env:
       - CMAKE_FLAGS="-DBUILD_SHARED_LIBS=FALSE"

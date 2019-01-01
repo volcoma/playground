@@ -1,6 +1,6 @@
 ﻿cmake_minimum_required(VERSION 3.4.3)
 
-project(market)
+project(playground)
 
 if(NOT CMAKE_RUNTIME_OUTPUT_DIRECTORY)
 	set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
