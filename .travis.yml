@@ -7,7 +7,7 @@ env:
 addons:
   apt_packages:
     - cmake
-    - libopenssl-dev
+    - openssl
     #- libxrandr-dev
     #- libudev-dev
     #- libopenal-dev
