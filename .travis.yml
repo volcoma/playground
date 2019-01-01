@@ -10,18 +10,29 @@ addons:
       - cmake
       - ninja
       - openssl
-  homebrew:
-    packages:
-      - cmake
-      - ninja
-      - openssl@1.1
-  chocolatey:
-    packages:
-      - cmake
-      - ninja
-      - openssl.light    
+  #homebrew:
+  #  packages:
+  #    - cmake
+  #    - ninja
+  #    - openssl1.1
+  #chocolatey:
+  #  packages:
+  #    - cmake
+  #    - ninja
+  #    - openssl.light    
     
 
+
+before_install:
+  - eval "${MATRIX_EVAL}"
+  - if [[ "${TRAVIS_OS_NAME}" == "windows" ]]; then   
+      choco install cmake
+      choco install openssl.light
+    elif [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
+      brew install cmake
+      brew install openssl1.1
+    fi
+    
 
 before_script:
 - mkdir build && cd build
@@ -32,7 +43,57 @@ script:
 
 matrix:
   include:
+ 
+    - os: osx
+      osx_image: xcode10
+      addons: &gcc5
+        homebrew:
+          packages:
+            - gcc5
+      env:
+        - MATRIX_EVAL="brew install gcc5 && CC=gcc-5 && CXX=g++-5"
+ 
+    - os: osx
+      osx_image: xcode10
+      addons: &gcc6
+        homebrew:
+          packages:
+            - gcc6
+      env:
+        - MATRIX_EVAL="brew install gcc6 && CC=gcc-6 && CXX=g++-6"
+    - os: osx
+      osx_image: xcode10
+      addons: &gcc7
+        homebrew:
+          packages:
+            - gcc
+      env:
+        - MATRIX_EVAL="brew install gcc && CC=gcc-7 && CXX=g++-7"
 
+
+   #- name: "macOS Xcode 10 Static"
+   #  os: osx
+   #  osx_image: xcode10
+   #  env:
+   #   - CMAKE_FLAGS="-DBUILD_SHARED_LIBS=FALSE"
+
+    - name: "iOS Xcode 10"
+      os: osx
+      osx_image: xcode10
+      env:
+       - CMAKE_FLAGS="-GXcode -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchains/iOS.toolchain.cmake -DIOS_PLATFORM=SIMULATOR"
+    
+    - name: "Visual studio 15 2017"
+      os: windows
+      
+    - name: "MinGW"
+      os: windows
+    
+    #- name: "Visual studio 15 2017 Static"
+    #  os: windows
+    #  env:
+    #    - CMAKE_FLAGS="-DBUILD_SHARED_LIBS=FALSE"
+  
     # 1/ Linux Clang Builds
     - os: linux
       addons: &clang38
@@ -119,63 +180,7 @@ matrix:
             - g++-7
       env:
         - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
-        
- 
-    - name: "macOS Xcode 10 gcc-5"
-      os: osx
-      osx_image: xcode10
-      addons: &gcc5
-        homebrew:
-          packages:
-            - gcc5
-      env:
-        - MATRIX_EVAL="CC=gcc-5 && CXX=g++-5"
- 
-    - name: "macOS Xcode 10 gcc-5"
-      os: osx
-      osx_image: xcode10
-      addons: &gcc6
-        homebrew:
-          packages:
-            - gcc6
-      env:
-        - MATRIX_EVAL="CC=gcc-6 && CXX=g++-6"
-
-    - os: osx
-      osx_image: xcode10
-      addons: &gcc7
-        homebrew:
-          packages:
-            - gcc7
-      env:
-        - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
-        
-    - name: "macOS Xcode 10"
-      os: osx
-      osx_image: xcode10
-
-   #- name: "macOS Xcode 10 Static"
-   #  os: osx
-   #  osx_image: xcode10
-   #  env:
-   #   - CMAKE_FLAGS="-DBUILD_SHARED_LIBS=FALSE"
-
-    - name: "iOS Xcode 10"
-      os: osx
-      osx_image: xcode10
-      env:
-       - CMAKE_FLAGS="-GXcode -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchains/iOS.toolchain.cmake -DIOS_PLATFORM=SIMULATOR"
-    
-    - name: "Visual studio 15 2017"
-      os: windows
-    
-    #- name: "Visual studio 15 2017 Static"
-    #  os: windows
-    #  env:
-    #    - CMAKE_FLAGS="-DBUILD_SHARED_LIBS=FALSE"
-
-before_install:
-  - eval "${MATRIX_EVAL}"
+     
     
 notifications:
   email: false
