@@ -21,19 +21,7 @@ addons:
   #    - ninja
   #    - openssl.light    
     
-
-
-before_install:
-  - eval "${MATRIX_EVAL}"
-  - if [[ "${TRAVIS_OS_NAME}" == "windows" ]]; then   
-      choco install cmake
-      choco install openssl.light
-    elif [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
-      brew install cmake
-      brew install openssl1.1
-    fi
     
-
 before_script:
 - mkdir build && cd build
 - cmake ..
@@ -51,7 +39,7 @@ matrix:
           packages:
             - gcc5
       env:
-        - MATRIX_EVAL="brew install gcc5 && CC=gcc-5 && CXX=g++-5"
+        - MATRIX_EVAL="CC=gcc-5 && CXX=g++-5"
  
     - os: osx
       osx_image: xcode10
@@ -60,7 +48,7 @@ matrix:
           packages:
             - gcc6
       env:
-        - MATRIX_EVAL="brew install gcc6 && CC=gcc-6 && CXX=g++-6"
+        - MATRIX_EVAL="CC=gcc-6 && CXX=g++-6"
     - os: osx
       osx_image: xcode10
       addons: &gcc7
@@ -68,7 +56,7 @@ matrix:
           packages:
             - gcc
       env:
-        - MATRIX_EVAL="brew install gcc && CC=gcc-7 && CXX=g++-7"
+        - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
 
 
    #- name: "macOS Xcode 10 Static"
@@ -86,8 +74,8 @@ matrix:
     - name: "Visual studio 15 2017"
       os: windows
       
-    - name: "MinGW"
-      os: windows
+    #- name: "MinGW"
+    #  os: windows
     
     #- name: "Visual studio 15 2017 Static"
     #  os: windows
