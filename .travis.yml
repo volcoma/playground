@@ -7,20 +7,16 @@ before_install:
     if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
       sudo apt-get install cmake
       sudo apt-get install ninja
-      
-      
       sudo apt-get install openssl
     elif [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
       brew install cmake
       brew install ninja
-      
       brew install openssl@1.1
       export OPENSSL_ROOT_DIR="/usr/local/opt/openssl@1.1"
       echo "$OPENSSL_ROOT_DIR"
     elif [[ "${TRAVIS_OS_NAME}" == "windows" ]]; then
       choco install cmake
       choco install ninja
-      
       choco install openssl.light
       export OPENSSL_ROOT_DIR="C:\Program Files\OpenSSL\"
       echo "$OPENSSL_ROOT_DIR"
