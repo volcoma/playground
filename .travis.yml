@@ -13,7 +13,8 @@ matrix:
           packages:
             - gcc5
       env:
-        - MATRIX_EVAL="CC=gcc-5 && CXX=g++-5"
+        - COMPILERCXX="g++-5"
+        - COMPILERC="gcc-5"
  
     - os: osx
       osx_image: xcode10
@@ -22,7 +23,8 @@ matrix:
           packages:
             - gcc6
       env:
-        - MATRIX_EVAL="CC=gcc-6 && CXX=g++-6"
+        - COMPILERCXX="g++-6"
+        - COMPILERC="gcc-6"
 
     - os: osx
       osx_image: xcode10
@@ -31,28 +33,34 @@ matrix:
           packages:
             - gcc
       env:
-        - MATRIX_EVAL="CC=gcc && CXX=g++"
+        - COMPILERCXX="g++"
+        - COMPILERC="gcc"
 ###################################################### 
 #OSX Clang
 ###################################################### 
     - os: osx
       osx_image: xcode10
-      compiler: clang
       env:
         - CMAKE_FLAGS="-GXcode -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchains/iOS.toolchain.cmake -DIOS_PLATFORM=SIMULATOR"
+        - COMPILERCXX="clang++"
+        - COMPILERC="clang"
 
 ###################################################### 
 #Windows MSVC
 ######################################################         
     - name: "Visual studio 15 2017"
       os: windows
-
+      env:
+        - COMPILERCXX="cl"
+        - COMPILERC="cl"
 ###################################################### 
 #Windows MinGW
 ######################################################       
     - name: "MinGW"
       os: windows
-      compiler: gcc
+      env:
+        - COMPILERCXX="g++"
+        - COMPILERC="gcc"
 
 ###################################################### 
 #Linux Clang
@@ -67,7 +75,8 @@ matrix:
             - libstdc++-5-dev
             - clang-3.8
       env: 
-        - MATRIX_EVAL="CC=clang-3.8 && CXX=clang++-3.8"
+        - COMPILERCXX="clang++-3.8"
+        - COMPILERC="clang-3.8"
  
  
     - os: linux
@@ -80,7 +89,8 @@ matrix:
             - libstdc++-6-dev
             - clang-3.9
       env: 
-        - MATRIX_EVAL="CC=clang-3.9 && CXX=clang++-3.9"
+        - COMPILERCXX="clang++-3.9"
+        - COMPILERC="clang-3.9"
  
  
     - os: linux
@@ -93,7 +103,8 @@ matrix:
             - libstdc++-6-dev
             - clang-4.0
       env: 
-        - MATRIX_EVAL="CC=clang-4.0 && CXX=clang++-4.0"
+        - COMPILERCXX="clang++-4.0"
+        - COMPILERC="clang-4.0"
  
     
     - os: linux
@@ -106,7 +117,8 @@ matrix:
             - libstdc++-7-dev
             - clang-5.0
       env: 
-        - MATRIX_EVAL="CC=clang-5.0 && CXX=clang++-5.0"
+        - COMPILERCXX="clang++-5.0"
+        - COMPILERC="clang-5.0"
         
 ###################################################### 
 #Linux GCC
@@ -121,7 +133,8 @@ matrix:
           packages: 
             - g++-5
       env:
-        - MATRIX_EVAL="CC=gcc-5 && CXX=g++-5"
+        - COMPILERCXX="g++-5"
+        - COMPILERC="gcc-5"
  
  
     - os: linux
@@ -133,7 +146,8 @@ matrix:
           packages: 
             - g++-6
       env:
-        - MATRIX_EVAL="CC=gcc-6 && CXX=g++-6"
+        - COMPILERCXX="g++-6"
+        - COMPILERC="gcc-6"
  
         
     - os: linux
@@ -144,7 +158,8 @@ matrix:
           packages: 
             - g++-7
       env:
-        - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
+        - COMPILERCXX="g++-7"
+        - COMPILERC="gcc-7"
 ###################################################### 
 
 
@@ -167,12 +182,12 @@ before_install:
       choco install ninja
       
       choco install openssl.light
-      export OPENSSL_ROOT_DIR="C:\\Program Files\\OpenSSL\\"
+      export OPENSSL_ROOT_DIR="C:/Program Files/OpenSSL"
     fi
 
 before_script:
 - mkdir build && cd build
-- cmake -G "Ninja" ..
+- cmake -G "Ninja" -DCMAKE_C_COMPILER=$COMPILERC -DCMAKE_CXX_COMPILER=$COMPILERCXX ..
 
 script:
 - cmake --build . --target all
