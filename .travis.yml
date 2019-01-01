@@ -4,14 +4,14 @@ env:
   global:
    - MAKEFLAGS="-j 2"
    
-addons: 
+addons:
   apt:
     packages: &global_apt
       - cmake
       - ninja
       - openssl
-  homebrew: &global_homebrew
-    packages:
+  homebrew:
+    packages: &global_homebrew
       - cmake
       - ninja
       - openssl1.1
@@ -19,8 +19,7 @@ addons:
     packages:
       - cmake
       - ninja
-      - openssl.light    
-    
+      - openssl.light
 
 
 before_script:
