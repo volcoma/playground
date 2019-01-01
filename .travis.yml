@@ -4,24 +4,25 @@ env:
   global:
    - MAKEFLAGS="-j 2"
    
-addons:
+addons: 
   apt:
-    packages:
+    packages: &global_apt
       - cmake
       - ninja
       - openssl
-  #homebrew:
-  #  packages:
-  #    - cmake
-  #    - ninja
-  #    - openssl1.1
-  #chocolatey:
-  #  packages:
-  #    - cmake
-  #    - ninja
-  #    - openssl.light    
+  homebrew: &global_homebrew
+    packages:
+      - cmake
+      - ninja
+      - openssl1.1
+  chocolatey: &global_chocolatey
+    packages:
+      - cmake
+      - ninja
+      - openssl.light    
     
-    
+
+
 before_script:
 - mkdir build && cd build
 - cmake ..
@@ -37,6 +38,7 @@ matrix:
       addons: &gcc5
         homebrew:
           packages:
+            - *global_homebrew
             - gcc5
       env:
         - MATRIX_EVAL="CC=gcc-5 && CXX=g++-5"
@@ -46,6 +48,7 @@ matrix:
       addons: &gcc6
         homebrew:
           packages:
+            - *global_homebrew
             - gcc6
       env:
         - MATRIX_EVAL="CC=gcc-6 && CXX=g++-6"
@@ -54,6 +57,7 @@ matrix:
       addons: &gcc7
         homebrew:
           packages:
+            - *global_homebrew
             - gcc
       env:
         - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
@@ -170,5 +174,9 @@ matrix:
         - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
      
     
+
+before_install:
+  - eval "${MATRIX_EVAL}"
+  
 notifications:
   email: false
