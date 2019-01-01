@@ -4,22 +4,22 @@ env:
   global:
     - MAKEFLAGS="-j 2"  
    
-addons:
-  apt:
-    packages: &global_apt
-      - cmake
-      - ninja
-      - openssl
-  homebrew:
-    packages: &global_homebrew
-      - cmake
-      - ninja
-      - openssl@1.1
-  chocolatey: &global_chocolatey
-    packages:
-      - cmake
-      - ninja
-      - openssl.light
+#addons:
+#  apt:
+#    packages: &global_apt
+#      - cmake
+#      - ninja
+#      - openssl
+#  homebrew:
+#    packages: &global_homebrew
+#      - cmake
+#      - ninja
+#      - openssl@1.1
+#  chocolatey: &global_chocolatey
+#    packages:
+#      - cmake
+#      - ninja
+#      - openssl.light
 
 
 before_script:
@@ -37,10 +37,8 @@ matrix:
       addons: &gcc5
         homebrew:
           packages:
-            - *global_homebrew
             - gcc5
       env:
-        - OPENSSL_ROOT_DIR="/usr/local/opt/openssl@1.1"
         - MATRIX_EVAL="CC=gcc-5 && CXX=g++-5"
  
     - os: osx
@@ -48,22 +46,18 @@ matrix:
       addons: &gcc6
         homebrew:
           packages:
-            - *global_homebrew
             - gcc6
       env:
-        - OPENSSL_ROOT_DIR="/usr/local/opt/openssl@1.1"
         - MATRIX_EVAL="CC=gcc-6 && CXX=g++-6"
 
     - os: osx
       osx_image: xcode10
-      addons: &gcc7
+      addons: &gcc-latest
         homebrew:
           packages:
-            - *global_homebrew
             - gcc
       env:
-        - OPENSSL_ROOT_DIR="/usr/local/opt/openssl@1.1"
-        - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
+        - MATRIX_EVAL="CC=gcc && CXX=g++"
 
 
    #- name: "macOS Xcode 10 Static"
@@ -76,7 +70,6 @@ matrix:
       os: osx
       osx_image: xcode10
       env:
-        - OPENSSL_ROOT_DIR="/usr/local/opt/openssl@1.1"
         - CMAKE_FLAGS="-GXcode -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchains/iOS.toolchain.cmake -DIOS_PLATFORM=SIMULATOR"
     
     - name: "Visual studio 15 2017"
@@ -99,7 +92,6 @@ matrix:
             - llvm-toolchain-trusty-3.8
             - ubuntu-toolchain-r-test
           packages:
-            - *global_apt
             - libstdc++-5-dev
             - clang-3.8
       env: 
@@ -113,7 +105,6 @@ matrix:
             - llvm-toolchain-trusty-3.9
             - ubuntu-toolchain-r-test
           packages:
-            - *global_apt          
             - libstdc++-6-dev
             - clang-3.9
       env: 
@@ -127,7 +118,6 @@ matrix:
             - llvm-toolchain-trusty-4.0
             - ubuntu-toolchain-r-test
           packages: 
-            - *global_apt
             - libstdc++-6-dev
             - clang-4.0
       env: 
@@ -141,7 +131,6 @@ matrix:
             - llvm-toolchain-trusty-5.0
             - ubuntu-toolchain-r-test
           packages: 
-            - *global_apt
             - libstdc++-7-dev
             - clang-5.0
       env: 
@@ -155,7 +144,6 @@ matrix:
           sources: 
             - ubuntu-toolchain-r-test
           packages: 
-            - *global_apt
             - g++-5
       env:
         - MATRIX_EVAL="CC=gcc-5 && CXX=g++-5"
@@ -168,7 +156,6 @@ matrix:
           sources: 
             - ubuntu-toolchain-r-test
           packages: 
-            - *global_apt
             - g++-6
       env:
         - MATRIX_EVAL="CC=gcc-6 && CXX=g++-6"
@@ -180,7 +167,6 @@ matrix:
           sources: 
             - ubuntu-toolchain-r-test
           packages: 
-            - *global_apt
             - g++-7
       env:
         - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
@@ -189,6 +175,18 @@ matrix:
 
 before_install:
   - eval "${MATRIX_EVAL}"
+  - |
+    if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
+      apt-get install cmake
+      apt-get install libopenssl-dev
+    elif [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
+      brew install cmake
+      brew install openssl@1.1
+      export OPENSSL_ROOT_DIR="/usr/local/opt/openssl@1.1"
+    elif [[ "${TRAVIS_OS_NAME}" == "windows" ]]; then
+      choco install cmake
+      choco install openssl.light
+    fi
   
 notifications:
   email: false
