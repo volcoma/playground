@@ -1,35 +1,5 @@
 language: cpp
 
-
-before_install:
-  - eval "${MATRIX_EVAL}"
-  - |
-    if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
-      sudo apt-get install cmake
-      sudo apt-get install ninja
-      sudo apt-get install openssl
-    elif [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
-      brew install cmake
-      brew install ninja
-      brew install openssl@1.1
-      export OPENSSL_ROOT_DIR="/usr/local/opt/openssl@1.1"
-      echo "$OPENSSL_ROOT_DIR"
-    elif [[ "${TRAVIS_OS_NAME}" == "windows" ]]; then
-      choco install cmake
-      choco install ninja
-      choco install openssl.light
-      export OPENSSL_ROOT_DIR="C:\Program Files\OpenSSL\"
-      echo "$OPENSSL_ROOT_DIR"
-    fi
-
-before_script:
-- mkdir build && cd build
-- cmake -G "Ninja" ..
-
-script:
-- cmake --build . --target all
-
-
 matrix:
   include:
  
@@ -177,6 +147,36 @@ matrix:
         - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
 ###################################################### 
 
-  
+
+before_install:
+  - eval "${MATRIX_EVAL}"
+  - |
+    if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
+      sudo apt-get install cmake
+      sudo apt-get install ninja
+      
+      sudo apt-get install openssl
+    elif [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
+      brew install cmake
+      brew install ninja
+      
+      brew install openssl@1.1
+      export OPENSSL_ROOT_DIR="/usr/local/opt/openssl@1.1"
+    elif [[ "${TRAVIS_OS_NAME}" == "windows" ]]; then
+      choco install cmake
+      choco install ninja
+      
+      choco install openssl.light
+      export OPENSSL_ROOT_DIR="C:\Program Files\OpenSSL\"
+    fi
+
+before_script:
+- mkdir build && cd build
+- cmake -G "Ninja" ..
+
+script:
+- cmake --build . --target all
+
+
 notifications:
   email: false
