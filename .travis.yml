@@ -174,5 +174,8 @@ matrix:
     #  env:
     #    - CMAKE_FLAGS="-DBUILD_SHARED_LIBS=FALSE"
 
+before_install:
+  - eval "${MATRIX_EVAL}"
+    
 notifications:
   email: false
