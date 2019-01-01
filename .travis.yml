@@ -14,7 +14,7 @@ addons:
     packages:
       - cmake
       - ninja
-      - openssl   
+      - openssl@1.1
   chocolatey:
     packages:
       - cmake
@@ -127,7 +127,7 @@ matrix:
       addons: &gcc5
         homebrew:
           packages:
-            - gcc-5
+            - gcc5
       env:
         - MATRIX_EVAL="CC=gcc-5 && CXX=g++-5"
  
@@ -137,7 +137,7 @@ matrix:
       addons: &gcc6
         homebrew:
           packages:
-            - gcc-6
+            - gcc6
       env:
         - MATRIX_EVAL="CC=gcc-6 && CXX=g++-6"
 
@@ -146,7 +146,7 @@ matrix:
       addons: &gcc7
         homebrew:
           packages:
-            - gcc-7
+            - gcc7
       env:
         - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
         
