@@ -59,16 +59,9 @@ matrix:
       env:
         - MATRIX_EVAL="CC=gcc && CXX=g++"
 
-
-   #- name: "macOS Xcode 10 Static"
-   #  os: osx
-   #  osx_image: xcode10
-   #  env:
-   #   - CMAKE_FLAGS="-DBUILD_SHARED_LIBS=FALSE"
-
-    - name: "iOS Xcode 10"
-      os: osx
+    - os: osx
       osx_image: xcode10
+      compiler: clang
       env:
         - CMAKE_FLAGS="-GXcode -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchains/iOS.toolchain.cmake -DIOS_PLATFORM=SIMULATOR"
     
@@ -186,7 +179,7 @@ before_install:
     elif [[ "${TRAVIS_OS_NAME}" == "windows" ]]; then
       choco install cmake
       choco install openssl.light
-      export OPENSSL_ROOT_DIR="C:\\Program Files\\OpenSSL"
+      export OPENSSL_ROOT_DIR="C:\Program Files\OpenSSL"
     fi
   
 notifications:
