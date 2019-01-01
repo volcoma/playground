@@ -1,0 +1,89 @@
+language: cpp
+
+addons:
+  apt_packages:
+    - cmake
+    #- libxrandr-dev
+    #- libudev-dev
+    #- libopenal-dev
+    #- libflac-dev
+    #- libvorbis-dev
+    - g++
+    - clang-3.8
+    - clang-3.9
+    - clang-4.0
+    - clang-5.0
+    #- libgl1-mesa-dev
+
+before_script:
+- mkdir build && cd build
+- cmake ..
+
+script:
+- cmake --build . --target all
+
+matrix:
+  include:
+
+  - name: "Linux gcc Dynamic"
+    os: linux
+    dist: xenial
+    compiler: gcc
+  
+  - name: "Linux gcc Static"
+    os: linux
+    dist: xenial
+    compiler: gcc
+    env:
+      - CMAKE_FLAGS="-DBUILD_SHARED_LIBS=FALSE"
+
+  - name: "Linux clang-3.8 Dynamic"
+    os: linux
+    dist: xenial
+    compiler: clang-3.8
+
+  - name: "Linux clang-3.8 Static"
+    os: linux
+    dist: xenial
+    compiler: clang-3.8
+    env:
+      - CMAKE_FLAGS="-DBUILD_SHARED_LIBS=FALSE"
+      
+  - name: "Linux clang-5.0 Dynamic"
+    os: linux
+    dist: xenial
+    compiler: clang-5.0
+
+  - name: "Linux clang-5.0 Static"
+    os: linux
+    dist: xenial
+    compiler: clang-5.0
+    env:
+      - CMAKE_FLAGS="-DBUILD_SHARED_LIBS=FALSE"
+
+  - name: "macOS Xcode 10 Dynamic"
+    os: osx
+    osx_image: xcode10
+
+  - name: "macOS Xcode 10 Static"
+    os: osx
+    osx_image: xcode10
+    env:
+     - CMAKE_FLAGS="-DBUILD_SHARED_LIBS=FALSE"
+
+  - name: "iOS Xcode 10"
+    os: osx
+    osx_image: xcode10
+    env:
+     - CMAKE_FLAGS="-GXcode -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchains/iOS.toolchain.cmake -DIOS_PLATFORM=SIMULATOR"
+
+  - name: "Visual studio 15 2017 Dynamic"
+    os: windows
+
+  - name: "Visual studio 15 2017 Static"
+    os: windows
+    env:
+      - CMAKE_FLAGS="-DBUILD_SHARED_LIBS=FALSE"
+
+notifications:
+  email: false
