@@ -75,7 +75,7 @@ auto download_remote_file(const std::string& repo, const std::string& tag_id, co
 	std::string remove_cmd;
 #ifdef _WIN32
 	remove_cmd.append("if exist " + tmp_repo + " (rd /s /q " + tmp_repo + ")");
-#elif
+#else
 	remove_cmd.append("rm -rf " + tmp_repo);
 #endif
 	{
